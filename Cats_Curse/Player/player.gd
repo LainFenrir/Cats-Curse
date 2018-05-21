@@ -31,7 +31,6 @@ func _physics_process(delta):
 	var upRelease = Input.is_action_just_released("ui_up")
 	var jumpRelease = Input.is_action_just_released("ui_accept")
 	
-	# checa para wall jump
 	onWall = $RayCastWall.is_colliding() 
 	
 	
@@ -58,8 +57,6 @@ func _physics_process(delta):
 		if jump:
 			changeState('jump')
 			currentState.update(direction,self,delta)
-		if jumpRelease and stateName == 'jump':
-			currentState.controlJump(self,delta)
 		if not is_on_floor() and stateName != 'death':
 			changeState('jump')
 			currentState.update(direction,self,delta)

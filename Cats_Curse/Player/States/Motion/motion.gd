@@ -24,3 +24,10 @@ func flipSprite(direction,host):
 
 func horizontalMovement(direction):
 		motion.x = SPEED * direction
+
+func invertSprite(direction,host):
+	direction = -direction
+	if direction == -1:
+		host.get_node("Sprite").flip_h = true
+	elif direction == 1:
+		host.get_node("Sprite").flip_h = false
