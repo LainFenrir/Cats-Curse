@@ -10,7 +10,6 @@ func update(host,delta):
 	lockCamera(host)
 	die(host,delta)
 
-
 func exit(host):
 	host.get_node('SpriteAnim').stop()
 	return

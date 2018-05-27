@@ -70,6 +70,5 @@ func fall(host,delta):
 
 func wallJump(direction,host,delta):
 	direction = -direction
-#	motion.x = 250 * direction
 	moveJumping(direction,host)
 	setFullMotion(host,delta)

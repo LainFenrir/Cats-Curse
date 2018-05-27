@@ -33,8 +33,7 @@ func _physics_process(delta):
 	
 	onWall = $RayCastWall.is_colliding() 
 	
-	
-	if stateName != 'death':
+	if not stateName in ['death','stagger']:
 		if left:
 			direction = -1
 			if is_on_floor():
@@ -67,6 +66,9 @@ func _physics_process(delta):
 	
 	if stateName == 'death':
 		currentState.update(self,delta)
+	
+	if stateName == 'stagger':
+		currentState.update(direction,self,delta)
 
 
 
@@ -77,6 +79,10 @@ func _input(event):
 		if event.is_action_released("ui_up"):
 			currentState.resetLookUp()
 
+func _on_SpriteAnim_animation_finished(anim_name):
+	if stateName == 'stagger':
+		stateName = currentState._on_SpriteAnim_animation_finished(anim_name)
+		changeState(stateName)
 
 
 func changeState(name):
