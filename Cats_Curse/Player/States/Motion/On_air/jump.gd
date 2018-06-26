@@ -3,7 +3,7 @@ extends "../motion.gd"
 
 var isControlJumping = false
 var slide = false
-
+var disableInput = false
 
 func enter(host):
 	motion.x = 0
@@ -14,8 +14,8 @@ func update(direction,host,delta):
 	if host.is_on_floor():
 		isControlJumping = false
 		groundJump(direction,host,delta)
-	elif host.getOnWall() and not host.is_on_floor():
-		wallSlide(direction,host,delta)
+	if host.getOnWall() and Input.is_action_just_pressed("ui_accept"):
+		wallJump(direction,host,delta)
 	elif not host.is_on_floor():
 		fall(host,delta)
 	if Input.is_action_just_released("ui_accept"):
@@ -30,36 +30,24 @@ func groundJump(direction,host,delta):
 	flipSprite(direction,host)
 	setFullMotion(host,delta)
 
-func wallSlide(direction,host,delta):
-	if Input.is_action_pressed("ui_right") and host.getOnWall():
-		setHalfMotion(host,delta)
-		slide  = true
-		isControlJumping = false
-	elif Input.is_action_pressed("ui_left") and host.getOnWall():
-		setHalfMotion(host,delta)
-		slide = true
-		isControlJumping = false
-	else:
-		fall(host,delta)
-		slide = false
-	if Input.is_action_just_pressed("ui_accept") and slide:
-		wallJump(direction,host,delta)
+func wallJump(direction,host,delta):
+	direction = -  direction
+	motion.x = 90 * direction
+	disableInput = true
+	$DisableInputTimer.start()
+	moveJumping(direction,host)
+	setFullMotion(host,delta)
+
+func moveJumping(direction,host):
+	if not disableInput:
+		moveOnAir(direction,host)
 
 func controlJump(host,delta):
 	if not isControlJumping:
 		setHalfMotion(host,delta)
 		isControlJumping = true
 
-func moveJumping(direction,host):
-	flipSprite(direction,host)
-	horizontalMovement(direction)
-
-
 ############ Utilities #################
-
-func setHalfMotion(host,delta):
-	motion *= .5
-	moveGravity(host,delta)
 
 func setFullMotion(host,delta):
 	motion.y = JUMP_HEIGHT
@@ -68,7 +56,5 @@ func setFullMotion(host,delta):
 func fall(host,delta):
 	moveGravity(host,delta)
 
-func wallJump(direction,host,delta):
-	direction = -direction
-	moveJumping(direction,host)
-	setFullMotion(host,delta)
+func _on_DisableInputTimer_timeout():
+	disableInput = false

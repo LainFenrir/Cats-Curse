@@ -1,4 +1,4 @@
-[gd_scene load_steps=17 format=2]
+[gd_scene load_steps=20 format=2]
 
 [ext_resource path="res://Player/player.gd" type="Script" id=1]
 [ext_resource path="res://_src/char_test.png" type="Texture" id=2]
@@ -9,11 +9,13 @@
 [ext_resource path="res://Player/States/Combat/stagger.gd" type="Script" id=7]
 [ext_resource path="res://Player/States/Combat/death.gd" type="Script" id=8]
 [ext_resource path="res://Player/States/Combat/attack.gd" type="Script" id=9]
+[ext_resource path="res://Player/States/Motion/On_air/climb.gd" type="Script" id=10]
+[ext_resource path="res://Player/States/Motion/On_ground/run.gd" type="Script" id=11]
 
-[sub_resource type="RectangleShape2D" id=1]
+[sub_resource type="CircleShape2D" id=1]
 
 custom_solver_bias = 0.0
-extents = Vector2( 8.95837, 8.9614 )
+radius = 8.23186
 
 [sub_resource type="Animation" id=2]
 
@@ -138,6 +140,11 @@ tracks/0/keys = {
 "values": [ Vector2( 33, -31 ), Vector2( 33, -180 ) ]
 }
 
+[sub_resource type="RectangleShape2D" id=8]
+
+custom_solver_bias = 0.0
+extents = Vector2( 4.16037, 7.10509 )
+
 [node name="player" type="KinematicBody2D" index="0"]
 
 input_pickable = false
@@ -145,9 +152,9 @@ collision_layer = 2
 collision_mask = 29
 collision/safe_margin = 0.08
 script = ExtResource( 1 )
-_sections_unfolded = [ "Collision" ]
+_sections_unfolded = [ "Collision", "Transform" ]
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="." index="0"]
+[node name="Collider" type="CollisionShape2D" parent="." index="0"]
 
 shape = SubResource( 1 )
 _sections_unfolded = [ "Transform" ]
@@ -214,22 +221,16 @@ blend_times = [  ]
 
 [node name="RayCastWall" type="RayCast2D" parent="." index="4"]
 
+position = Vector2( 1.90714, -6.90383e-06 )
 rotation = -1.5708
-scale = Vector2( 0.3, 0.3 )
+scale = Vector2( 0.2, 0.159598 )
 enabled = true
 exclude_parent = true
 cast_to = Vector2( 0, 50 )
 collision_mask = 1
 _sections_unfolded = [ "Transform" ]
 
-[node name="LookDownTimer" type="Timer" parent="." index="5"]
-
-process_mode = 1
-wait_time = 0.5
-one_shot = true
-autostart = false
-
-[node name="States" type="Node" parent="." index="6"]
+[node name="States" type="Node" parent="." index="5"]
 
 [node name="Idle" type="Node" parent="States" index="0"]
 
@@ -243,9 +244,24 @@ script = ExtResource( 4 )
 
 script = ExtResource( 5 )
 
+[node name="DisableInputTimer" type="Timer" parent="States/Jump" index="0"]
+
+process_mode = 1
+wait_time = 0.2
+one_shot = true
+autostart = false
+
 [node name="Crouch" type="Node" parent="States" index="3"]
 
+editor/display_folded = true
 script = ExtResource( 6 )
+
+[node name="LookDownTimer" type="Timer" parent="States/Crouch" index="0"]
+
+process_mode = 1
+wait_time = 0.5
+one_shot = true
+autostart = false
 
 [node name="Stagger" type="Node" parent="States" index="4"]
 
@@ -255,14 +271,51 @@ script = ExtResource( 7 )
 
 script = ExtResource( 8 )
 
+[node name="DeathTimer" type="Timer" parent="States/Death" index="0"]
+
+process_mode = 1
+wait_time = 1.3
+one_shot = true
+autostart = false
+
 [node name="Attack" type="Node" parent="States" index="6"]
 
 script = ExtResource( 9 )
+
+[node name="Climb" type="Node" parent="States" index="7"]
+
+script = ExtResource( 10 )
+
+[node name="Run" type="Node" parent="States" index="8"]
+
+script = ExtResource( 11 )
+
+[node name="WallDetect" type="Area2D" parent="." index="6"]
+
+input_pickable = true
+gravity_vec = Vector2( 0, 1 )
+gravity = 98.0
+linear_damp = 0.1
+angular_damp = 1.0
+collision_layer = 2
+audio_bus_override = false
+audio_bus_name = "Master"
+_sections_unfolded = [ "Collision" ]
+
+[node name="WallCollision" type="CollisionShape2D" parent="WallDetect" index="0"]
+
+position = Vector2( 6, 0 )
+shape = SubResource( 8 )
+_sections_unfolded = [ "Transform" ]
 
 [connection signal="animation_finished" from="SpriteAnim" to="States/Stagger" method="_on_SpriteAnim_animation_finished"]
 
 [connection signal="animation_finished" from="SpriteAnim" to="." method="_on_SpriteAnim_animation_finished"]
 
-[connection signal="timeout" from="LookDownTimer" to="States/Crouch" method="_on_LookDownTimer_timeout"]
+[connection signal="timeout" from="States/Jump/DisableInputTimer" to="States/Jump" method="_on_DisableInputTimer_timeout"]
+
+[connection signal="timeout" from="States/Crouch/LookDownTimer" to="States/Crouch" method="_on_LookDownTimer_timeout"]
+
+[connection signal="timeout" from="States/Death/DeathTimer" to="." method="_on_DeathTimer_timeout"]
 
 

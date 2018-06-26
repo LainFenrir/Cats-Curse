@@ -12,10 +12,10 @@ func update(direction,host,delta):
 func exit(host):
 	host.get_node('SpriteAnim').stop()
 
-#####Main Actions #############
+##### Main Actions #############
 
 func walk(direction,host,delta):
-	horizontalMovement(direction)
+	horizontalMovement(direction,WALK_SPEED)
 	moveGravity(host,delta)
 
 
