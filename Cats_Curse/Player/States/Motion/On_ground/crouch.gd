@@ -4,7 +4,7 @@ var isLookingDown = false
 var cameraNode
 
 func enter(host):
-	#host.get_node('SpriteAnim').play('crouch')
+	host.get_node('SpriteAnim').play('crouch')
 	cameraNode = host.get_node("Camera2D/CameraAnim")
 	startTimer()
 	return 'crouch'
@@ -16,6 +16,7 @@ func update(direction,host,delta):
 
 
 func exit(host):
+	host.get_node('SpriteAnim').stop()
 	$LookDownTimer.stop()
 	resetLookDown()
 	return

@@ -3,7 +3,7 @@ extends "../motion.gd"
 var slide = true
 
 func enter(host):
-#	host.get_node('SpriteAnim').play('climb')
+	host.get_node('SpriteAnim').play('slide')
 	slide =true
 	motion.y = 0
 	return 'climb'
@@ -24,6 +24,7 @@ func update(direction,host,delta):
 	if Input.is_action_just_released("run"):
 		slide = true
 	if slide:
+		flipSpriteSlide(direction,host)
 		slide(host,delta)
 
 
@@ -31,7 +32,7 @@ func update(direction,host,delta):
 
 
 func exit(host):
-#	host.get_node('SpriteAnim').stop()
+	host.get_node('SpriteAnim').stop()
 	return
 
 #### Main Actions######################

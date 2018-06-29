@@ -43,3 +43,8 @@ func flipSprite(direction,host):
 		host.get_node("RayCastWall").rotation_degrees = -90
 		host.get_node("WallDetect/WallCollision").position.x = 6
 
+func flipSpriteSlide(direction,host):
+	if direction == 1:
+		host.get_node("Sprite").flip_h = true
+	elif direction == -1:
+		host.get_node("Sprite").flip_h = false

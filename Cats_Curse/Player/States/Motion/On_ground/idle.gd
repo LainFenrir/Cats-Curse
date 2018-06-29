@@ -4,7 +4,7 @@ var cameraNode
 var isLookingUp = false
 
 func enter(host):
-	#host.get_node('SpriteAnim').play('idle')
+	host.get_node('SpriteAnim').play('idle')
 	return 'idle'
 
 func update(host,delta):
@@ -12,7 +12,7 @@ func update(host,delta):
 	
 
 func exit(host):
-	#host.get_node('SpriteAnim').stop()
+	host.get_node('SpriteAnim').stop()
 	if isLookingUp:
 		resetLookUp()
 	return

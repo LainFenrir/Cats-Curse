@@ -4,7 +4,7 @@ onready var respawnPoint = get_node("/root/teste/RespawnPoint")
 var start = true
 func enter(host):
 	start =  true
-	host.get_node('SpriteAnim').play('fall')
+	host.get_node('SpriteAnim').play('stagger')
 	motion = Vector2(0,-400)
 	return 'death'
 
